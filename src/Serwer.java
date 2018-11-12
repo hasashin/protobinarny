@@ -28,7 +28,7 @@ public class Serwer {
     }
 
     public void sprawdz() {
-        if (pakiet.getanswer() == liczba){
+       /* if (pakiet.getanswer() == liczba){
             System.out.println("Wartosc odgadnieta! Tajna liczba to: " + liczba);
         }
         if (pakiet.getanswer() < liczba){
@@ -36,7 +36,7 @@ public class Serwer {
         }
         if (pakiet.getanswer() > liczba){
             System.out.println("Za duzo! Probuj dalej");
-        }
+        } */
     }
 
     public void ileczasu(){
