@@ -48,6 +48,12 @@ public class Serwer {
         if (odp == liczba){
             k.wyslijpakiet(3);
             k.wyslijpakiet(6);
+            if(k.equals(k1)){
+                k2.wyslijpakiet(5);
+            }
+            else{
+                k1.wyslijpakiet(5);
+            }
         }
         else{
             k.wyslijpakiet(2);
