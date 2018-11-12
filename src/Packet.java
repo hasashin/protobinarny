@@ -27,4 +27,8 @@ public class Packet {
          return packet;
     }
 
+    byte getAnswer(){
+        return answer;
+    }
+
 }
