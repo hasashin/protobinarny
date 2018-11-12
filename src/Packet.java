@@ -8,6 +8,9 @@ public class Packet {
         answer = ans;
         this.id = id;
     }
+    public Packet(){
+
+    }
 
     byte[] getPacket(){
          byte[] packet = new byte[3];
