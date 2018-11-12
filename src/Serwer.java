@@ -97,7 +97,7 @@ public class Serwer {
 
         k1.wyslijpakiet(4, 0);
         k2.wyslijpakiet(4, 0);
-        
+
         f1.start();
         f2.start();
 

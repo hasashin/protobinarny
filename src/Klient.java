@@ -57,16 +57,12 @@ public class Klient implements Runnable{
     }
 
     public void run(){
-        while(true){
+        while(ser.warunek){
             try {
                 in.read(pakiet);            //  odpowiedz
                 decode(pakiet);
             }
                  catch(java.io.IOException e){}
-
-
-
-
         }
 
 
