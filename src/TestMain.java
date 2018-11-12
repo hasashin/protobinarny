@@ -1,10 +1,9 @@
 public class TestMain {
 
     public static void main(String[] args){
-        Packet pakiet = new Packet((byte)5,(byte)4,(byte)30);
-        for(byte bajt :pakiet.getPacket())
-        for(int i=0;i<8;i++){
-            System.out.print(bajt << i);
+        if(args.length == 1) {
+            Serwer serwer = new Serwer(Integer.parseInt(args[0]));
+            serwer.start();
         }
     }
 
