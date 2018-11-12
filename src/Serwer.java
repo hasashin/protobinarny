@@ -44,7 +44,7 @@ public class Serwer {
     }
 
     public void start(){
-        
+
     }
 
 }
