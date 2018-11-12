@@ -41,6 +41,12 @@ public class Klient implements Runnable{
         switch (operacja) {
             case 7:
                 ser.sprawdz(odpowiedź, this);
+                break;
+            case 6:
+                zakoncz();
+
+
+
             default:
                 break;
         }

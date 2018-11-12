@@ -47,6 +47,7 @@ public class Serwer {
     public void sprawdz(int odp, Klient k) {
         if (odp == liczba){
             k.wyslijpakiet(3);
+            k.wyslijpakiet(6);
         }
         else{
             k.wyslijpakiet(2);
