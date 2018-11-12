@@ -18,13 +18,13 @@ public class Klient implements Runnable{
             out = new DataOutputStream(clientsocket.getOutputStream());
             id = clientid;
             ser = s;
-            wyslijpakiet(0);
+            wyslijpakiet(0, 0);
         }
              catch(java.io.IOException e){}
     }
 
-    public void wyslijpakiet(int operacja){
-        try {out.write(new Packet((byte)operacja, (byte)0, (byte)id).getPacket());  }
+    public void wyslijpakiet(int operacja, int liczba){
+        try {out.write(new Packet((byte)operacja, (byte)liczba, (byte)id).getPacket());  }
               catch(java.io.IOException e){}
     }
 
