@@ -76,8 +76,11 @@ public class Serwer {
         poczatkowy = System.currentTimeMillis()/1000;
         //ileczasu();
 
-        k1.run();
-        k2.run();
+        Thread f1 = new Thread(k1);
+        Thread f2 = new Thread(k2);
+
+        f1.start();
+        f2.start();
 
 
 
