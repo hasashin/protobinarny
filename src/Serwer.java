@@ -105,10 +105,11 @@ public class Serwer {
         long pietnascie = System.currentTimeMillis()/1000;
 
         while(warunek) {
-            if(System.currentTimeMillis()/1000 - pietnascie > 15000){
+            if((System.currentTimeMillis()/1000 - pietnascie) > 15){
                 ileczasu();
                 pietnascie = System.currentTimeMillis()/1000;
             }
+            System.out.println(System.currentTimeMillis()/1000 - pietnascie);
         }
 
         f1.interrupt();
