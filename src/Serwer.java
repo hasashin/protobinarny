@@ -68,6 +68,8 @@ public class Serwer {
         long zostalo = czasrozgrywki - uplynelo;
         if(zostalo > 0){
             System.out.println("Zostalo " + zostalo + " sekund");
+            k1.wyslijpakiet(1,(int)zostalo);
+            k2.wyslijpakiet(1,(int)zostalo);
         }
         else{
             k1.wyslijpakiet(6,0);
@@ -109,7 +111,6 @@ public class Serwer {
                 ileczasu();
                 pietnascie = System.currentTimeMillis()/1000;
             }
-            System.out.println(System.currentTimeMillis()/1000 - pietnascie);
         }
 
         f1.interrupt();
