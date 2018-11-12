@@ -15,7 +15,7 @@ public class Serwer {
     //LocalTime poczatkowyczas;
     long poczatkowy;
     int liczba;
-    boolean warunek;
+    boolean warunek=true;
     Packet pakiet = new Packet();
     ServerSocket socket;
     Klient k1;
@@ -55,6 +55,7 @@ public class Serwer {
             else{
                 k1.wyslijpakiet(5,liczba);
             }
+            warunek = false;
         }
         else{
             k.wyslijpakiet(2,0);
