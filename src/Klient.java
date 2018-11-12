@@ -9,7 +9,7 @@ public class Klient {
     Socket socket;
 
     Klient(InetAddress ip, int port){
-        socket = new Socket(ip,port);
+        try{ socket = new Socket(ip,port); }
     }
 
     public void uzyskajid{

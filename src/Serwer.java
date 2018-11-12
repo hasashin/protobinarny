@@ -28,15 +28,15 @@ public class Serwer {
     }
 
     public void sprawdz() {
-       /* if (pakiet.getanswer() == liczba){
+        if (pakiet.getAnswer() == liczba){
             System.out.println("Wartosc odgadnieta! Tajna liczba to: " + liczba);
         }
-        if (pakiet.getanswer() < liczba){
+        if (pakiet.getAnswer() < liczba){
             System.out.println("Za mało! Probuj dalej");
         }
-        if (pakiet.getanswer() > liczba){
+        if (pakiet.getAnswer() > liczba){
             System.out.println("Za duzo! Probuj dalej");
-        } */
+        }
     }
 
     public void ileczasu(){
