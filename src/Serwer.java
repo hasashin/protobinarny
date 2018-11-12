@@ -1,3 +1,5 @@
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Random;
 import java.util.Vector;
 
@@ -9,8 +11,13 @@ public class Serwer {
     int czasrozgrywki;
     int liczba;
     Packet pakiet = new Packet();
+    ServerSocket socket;
 
 
+    Serwer(int port){
+        try{socket = new ServerSocket(port); }
+        catch(java.io.IOException e){}
+    }
 
     public void generuj() {
         Random generator = new Random();
@@ -22,7 +29,7 @@ public class Serwer {
         czasrozgrywki = (Math.abs(id1 - id2) * 74) % 90 + 24;
     }
 
-    public void losuj() {
+    public void losujliczbe() {
         Random generator = new Random();
         liczba = (generator.nextInt(1024));
     }
@@ -43,7 +50,17 @@ public class Serwer {
         //System.out.println("Zostalo " + );
     }
 
+    public void wyslijpakiet(){
+        
+    }
+
     public void start(){
+        generuj();
+        Klient k1 = new Klient(socket, id1);
+        Klient k2 = new Klient(socket, id2);
+        maxczas();
+        losujliczbe();
+
 
     }
 

@@ -6,13 +6,17 @@ public class Klient {
 
     int id;
     int odp;
-    Socket socket;
+    Socket clientsocket;
 
-    Klient(InetAddress ip, int port){
-        try{ socket = new Socket(ip,port); }
+    Klient(ServerSocket ssocket, int clientid){
+        try{
+            clientsocket = ssocket.accept();   // łączenie socketów ze sobą
+            id = clientid;
+        }
+        catch(java.io.IOException e){}
     }
 
-    public void uzyskajid{
+    public void uzyskajid() {
         //odbierz od serwera
     }
 
@@ -22,8 +26,13 @@ public class Klient {
         //przeslij do serwera
     }
 
-    public void polacz(){}
+    public void polacz(){
+        // uzyskaj server socket
+    }
 
-    public void zakoncz(){}
+    public void zakoncz(){
+        try{ clientsocket.close(); }
+        catch(java.io.IOException e){}
+    }
 
 }
