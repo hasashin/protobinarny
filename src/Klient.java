@@ -18,7 +18,7 @@ public class Klient implements Runnable {
             out = new DataOutputStream(clientsocket.getOutputStream());
             id = clientid;
             ser = s;
-            wyslijpakiet(0, 0);
+            wyslijpakiet(0, 0,0);
         } catch (java.io.IOException e) {
         }
     }
