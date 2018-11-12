@@ -17,11 +17,15 @@ public class Serwer {
     int liczba;
     Packet pakiet = new Packet();
     ServerSocket socket;
+    Klient k1;
+    Klient k2;
 
 
     Serwer(int port){
         try{socket = new ServerSocket(port); }
-        catch(java.io.IOException e){}
+        catch(java.io.IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public void generuj() {
@@ -37,17 +41,15 @@ public class Serwer {
     public void losujliczbe() {
         Random generator = new Random();
         liczba = (generator.nextInt(7));
+        System.out.println("Wybrano " + liczba);
     }
 
-    public void sprawdz() {
-        if (pakiet.getAnswer() == liczba){
-           // System.out.println("Wartosc odgadnieta! Tajna liczba to: " + liczba);
+    public void sprawdz(int odp, Klient k) {
+        if (odp == liczba){
+            k.wyslijpakiet(3);
         }
-        if (pakiet.getAnswer() < liczba){
-           // System.out.println("Za mało! Probuj dalej");
-        }
-        if (pakiet.getAnswer() > liczba){
-           // System.out.println("Za duzo! Probuj dalej");
+        else{
+            k.wyslijpakiet(2);
         }
     }
 
@@ -63,19 +65,20 @@ public class Serwer {
         // czas max - ile uplynelo od uruchomienia = zostało
     }
 
-    public void wyslijpakiet(){
-
-    }
-
     public void start(){
         generuj();
-        Klient k1 = new Klient(socket, id1);
-        Klient k2 = new Klient(socket, id2);
+        k1 = new Klient(socket, id1, this);
+        k2 = new Klient(socket, id2, this);
+
         //poczatkowyczas = LocalTime.now();
-        long poczatkowy = System.currentTimeMillis()/1000;
-        //ileczasu();
         maxczas();
         losujliczbe();
+        poczatkowy = System.currentTimeMillis()/1000;
+        //ileczasu();
+
+        k1.run();
+        k2.run();
+
 
 
     }
