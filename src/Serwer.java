@@ -15,6 +15,7 @@ public class Serwer {
     //LocalTime poczatkowyczas;
     long poczatkowy;
     int liczba;
+    boolean warunek;
     Packet pakiet = new Packet();
     ServerSocket socket;
     Klient k1;
@@ -64,7 +65,14 @@ public class Serwer {
         long obecny = System.currentTimeMillis()/1000;
         long uplynelo = obecny - poczatkowy;
         long zostalo = czasrozgrywki - uplynelo;
-        System.out.println("Zostalo " + zostalo + " sekund");
+        if(zostalo > 0){
+            System.out.println("Zostalo " + zostalo + " sekund");
+        }
+        else{
+            k1.wyslijpakiet(6);
+            k2.wyslijpakiet(6);
+        }
+
 
         // LocalTime obecny = LocalTime.now();
         //long epoch = System.currentTimeMillis()/1000;
@@ -88,6 +96,11 @@ public class Serwer {
 
         f1.start();
         f2.start();
+
+        while(warunek) {
+            ileczasu();
+
+        }
 
 
 
