@@ -16,7 +16,6 @@ public class Serwer {
     long poczatkowy;
     int liczba;
     boolean warunek=true;
-    Packet pakiet = new Packet();
     ServerSocket socket;
     Klient k1;
     Klient k2;
@@ -47,18 +46,18 @@ public class Serwer {
 
     public void sprawdz(int odp, Klient k) {
         if (odp == liczba){
-            k.wyslijpakiet(3,0);
-            k.wyslijpakiet(6,0);
+            k.wyslijpakiet(3,0,0);
+            k.wyslijpakiet(6,0,0);
             if(k.equals(k1)){
-                k2.wyslijpakiet(5,liczba);
+                k2.wyslijpakiet(5,liczba,0);
             }
             else{
-                k1.wyslijpakiet(5,liczba);
+                k1.wyslijpakiet(5,liczba,0);
             }
             warunek = false;
         }
         else{
-            k.wyslijpakiet(2,0);
+            k.wyslijpakiet(2,0,0);
         }
     }
 
@@ -68,12 +67,12 @@ public class Serwer {
         long zostalo = czasrozgrywki - uplynelo;
         if(zostalo > 0){
             System.out.println("Zostalo " + zostalo + " sekund");
-            k1.wyslijpakiet(1,(int)zostalo);
-            k2.wyslijpakiet(1,(int)zostalo);
+            k1.wyslijpakiet(1,0,(int)zostalo);
+            k2.wyslijpakiet(1,0,(int)zostalo);
         }
         else{
-            k1.wyslijpakiet(6,0);
-            k2.wyslijpakiet(6,0);
+            k1.wyslijpakiet(6,0,0);
+            k2.wyslijpakiet(6,0,0);
             warunek = false;
         }
 
@@ -98,8 +97,8 @@ public class Serwer {
         Thread f1 = new Thread(k1);
         Thread f2 = new Thread(k2);
 
-        k1.wyslijpakiet(4, 0);
-        k2.wyslijpakiet(4, 0);
+        k1.wyslijpakiet(4, 0,0);
+        k2.wyslijpakiet(4, 0,0);
 
         f1.start();
         f2.start();
