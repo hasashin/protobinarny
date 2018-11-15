@@ -10,7 +10,7 @@ class Serwer {
     private int czasrozgrywki;
     private long poczatkowy;
     private int liczba;
-    boolean warunek=true;
+    private boolean warunek=true;
     private ServerSocket socket;
     private Klient k1;
     private Klient k2;
