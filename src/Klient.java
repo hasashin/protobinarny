@@ -1,15 +1,15 @@
 import java.net.*;
-import java.util.Scanner;
 import java.io.*;
 
 public class Klient implements Runnable {
 
-    int id;
-    Socket clientsocket;
-    DataInputStream in;
-    DataOutputStream out;
-    Serwer ser;
-    byte[] pakiet = new byte[3];
+    private int id;
+    private Socket clientsocket;
+    private DataInputStream in;
+    private DataOutputStream out;
+    private Serwer ser;
+    private byte[] pakiet = new byte[3];
+    private boolean warunek = true;
 
     Klient(ServerSocket ssocket, int clientid, Serwer s) {
         try {
@@ -18,12 +18,13 @@ public class Klient implements Runnable {
             out = new DataOutputStream(clientsocket.getOutputStream());
             id = clientid;
             ser = s;
-            wyslijpakiet(0, 0,0);
+            wyslijpakiet(0, 0, 0);
         } catch (java.io.IOException e) {
+            System.err.println(e.getMessage());
         }
     }
 
-    byte[] pakiet(int operacja, int liczba, int id, int czas) {
+    private byte[] pakiet(int operacja, int liczba, int id, int czas) {
         byte[] ret = new byte[3];
 
         ret[0] = (byte) operacja;
@@ -32,53 +33,62 @@ public class Klient implements Runnable {
 
         ret[1] = (byte) (id & 0b00011111);
 
-        ret[2] = (byte) (czas & 0b11111111);
+        ret[2] = (byte) (czas & 0xFF);
 
         return ret;
     }
 
-    public void wyslijpakiet(int operacja, int liczba, int czas) {
+    void wyslijpakiet(int operacja, int liczba, int czas) {
         try {
             out.write(pakiet(operacja, liczba, id, czas));
         } catch (IOException r) {
+            System.err.println(r.getMessage());
         }
     }
 
-    public void zakoncz() {
+    private void zakoncz() {
         try {
             clientsocket.close();
         } catch (java.io.IOException e) {
+            System.err.println(e.getMessage());
+        }
+        finally {
+            warunek = false;
         }
     }
 
-    void decode(byte[] data) {
-        int odpowiedź, sesja, operacja;
-        odpowiedź = (data[0] & 0b00111000) >> 3;
+    private void decode(byte[] data) {
+        int odpowiedz, sesja, operacja;
+        odpowiedz = (data[0] & 0b00111000) >> 3;
         operacja = data[0] & 0b00000111;
         sesja = data[1];
-        switch (operacja) {
-            case 7:
-                ser.sprawdz(odpowiedź, this);
-                break;
-            case 6:
-                zakoncz();
-
-
-            default:
-                break;
+        if (sesja == id) {
+            switch (operacja) {
+                case 7:
+                    ser.sprawdz(odpowiedz, this);
+                    break;
+                case 6:
+                    System.out.println("Klient "+id+" kończy połączenie");
+                    zakoncz();
+                    break;
+                default:
+                    break;
+            }
         }
-    }
-
-    public void odbierzodp() {
-
     }
 
     public void run() {
-        while (ser.warunek) {
+        int len;
+        while (warunek) {
             try {
-                in.read(pakiet);            //  odpowiedz
-                decode(pakiet);
+                len = in.read(pakiet);            //  odpowiedz
+                if (len == -1) {
+                    System.out.println("Klient " + id + " rozłączył się");
+                    warunek = false;
+                    break;
+                } else decode(pakiet);
             } catch (java.io.IOException e) {
+                System.err.println(e.getMessage());
             }
         }
 

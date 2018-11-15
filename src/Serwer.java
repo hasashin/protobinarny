@@ -1,24 +1,19 @@
+import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.time.LocalTime;
-import java.time.Period;
-import java.util.Date;
 import java.util.Random;
-import java.util.Vector;
 
 
-public class Serwer {
+class Serwer {
 
-    int id1;
-    int id2;
-    int czasrozgrywki;
-    //LocalTime poczatkowyczas;
-    long poczatkowy;
-    int liczba;
+    private int id1;
+    private int id2;
+    private int czasrozgrywki;
+    private long poczatkowy;
+    private int liczba;
     boolean warunek=true;
-    ServerSocket socket;
-    Klient k1;
-    Klient k2;
+    private ServerSocket socket;
+    private Klient k1;
+    private Klient k2;
 
 
     Serwer(int port){
@@ -28,40 +23,39 @@ public class Serwer {
         }
     }
 
-    public void generuj() {
+    private void generuj() {
         Random generator = new Random();
         id1 = (generator.nextInt(30) + 1);
         id2 = (generator.nextInt(30) + 1);
     }
 
-    public void maxczas() {
+    private void maxczas() {
         czasrozgrywki = (Math.abs(id1 - id2) * 74) % 90 + 24;
     }
 
-    public void losujliczbe() {
+    private void losujliczbe() {
         Random generator = new Random();
         liczba = (generator.nextInt(7));
         System.out.println("Wybrano " + liczba);
     }
 
-    public void sprawdz(int odp, Klient k) {
+    void sprawdz(int odp, Klient k) {
         if (odp == liczba){
             k.wyslijpakiet(3,0,0);
-            k.wyslijpakiet(6,0,0);
+            //k.wyslijpakiet(6,0,0);
             if(k.equals(k1)){
                 k2.wyslijpakiet(5,liczba,0);
             }
             else{
                 k1.wyslijpakiet(5,liczba,0);
             }
-            warunek = false;
         }
         else{
             k.wyslijpakiet(2,0,0);
         }
     }
 
-    public void ileczasu(){
+    private void ileczasu(){
         long obecny = System.currentTimeMillis()/1000;
         long uplynelo = obecny - poczatkowy;
         long zostalo = czasrozgrywki - uplynelo;
@@ -83,11 +77,15 @@ public class Serwer {
         // czas max - ile uplynelo od uruchomienia = zostało
     }
 
-    public void start(){
+    void start(){
         generuj();
+        System.out.println("Oczekiwanie na klientów...");
         k1 = new Klient(socket, id1, this);
+        System.out.println("Połączono 1/2, id "+id1);
         k2 = new Klient(socket, id2, this);
+        System.out.println("Połączono 2/2, id "+id2);
 
+        System.out.println("Przygotowywanie gry");
         //poczatkowyczas = LocalTime.now();
         maxczas();
         losujliczbe();
@@ -103,6 +101,8 @@ public class Serwer {
         f1.start();
         f2.start();
 
+        System.out.println("Start");
+
         long pietnascie = System.currentTimeMillis()/1000;
 
         while(warunek) {
@@ -110,10 +110,22 @@ public class Serwer {
                 ileczasu();
                 pietnascie = System.currentTimeMillis()/1000;
             }
+            if((poczatkowy*czasrozgrywki)-System.currentTimeMillis()/1000 <= 0){
+                ileczasu();
+            }
+            if(!f1.isAlive() && !f2.isAlive()){
+                warunek = false;
+            }
         }
 
         f1.interrupt();
         f2.interrupt();
+
+        try{
+            socket.close();
+        }catch(IOException e){
+            System.err.println(e.getMessage());
+        }
     }
 
 }
