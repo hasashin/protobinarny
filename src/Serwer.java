@@ -10,15 +10,16 @@ class Serwer {
     private int czasrozgrywki;
     private long poczatkowy;
     private int liczba;
-    private boolean warunek=true;
+    private boolean warunek = true;
     private ServerSocket socket;
     private Klient k1;
     private Klient k2;
 
 
-    Serwer(int port){
-        try{socket = new ServerSocket(port); }
-        catch(java.io.IOException e){
+    Serwer(int port) {
+        try {
+            socket = new ServerSocket(port);
+        } catch (java.io.IOException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -35,85 +36,77 @@ class Serwer {
 
     private void losujliczbe() {
         Random generator = new Random();
-        liczba = (generator.nextInt(7));
+        liczba = (generator.nextInt(254)+1);
         System.out.println("Wybrano " + liczba);
     }
 
     void sprawdz(int odp, Klient k) {
-        if (odp == liczba){
-            k.wyslijpakiet(3,0,0);
-            //k.wyslijpakiet(6,0,0);
-            if(k.equals(k1)){
-                k2.wyslijpakiet(5,liczba,0);
+        if (odp == liczba) {
+            k.wyslijpakiet(7, 1, 0, 0);
+
+            if (k.equals(k1)) {
+                k2.wyslijpakiet(7, 0, liczba, 0);
+            } else {
+                k1.wyslijpakiet(7, 0, liczba, 0);
             }
-            else{
-                k1.wyslijpakiet(5,liczba,0);
-            }
-        }
-        else{
-            k.wyslijpakiet(2,0,0);
+        } else {
+            k.wyslijpakiet(3, 1, 0, 0);
         }
     }
 
-    private void ileczasu(){
-        long obecny = System.currentTimeMillis()/1000;
+    private void ileczasu() {
+        long obecny = System.currentTimeMillis() / 1000;
         long uplynelo = obecny - poczatkowy;
         long zostalo = czasrozgrywki - uplynelo;
-        if(zostalo > 0){
+        if (zostalo > 0) {
             System.out.println("Zostalo " + zostalo + " sekund");
-            k1.wyslijpakiet(1,0,(int)zostalo);
-            k2.wyslijpakiet(1,0,(int)zostalo);
-        }
-        else{
-            k1.wyslijpakiet(6,0,0);
-            k2.wyslijpakiet(6,0,0);
+            k1.wyslijpakiet(3, 2, 0, (int) zostalo);
+            k2.wyslijpakiet(3, 2, 0, (int) zostalo);
+        } else {
+            k1.wyslijpakiet(7, 2, 0, 0);
+            k2.wyslijpakiet(7, 2, 0, 0);
             warunek = false;
         }
 
-
-        // LocalTime obecny = LocalTime.now();
-        //long epoch = System.currentTimeMillis()/1000;
-        // aktualny - poczatkowy = ile upłynęło od uruchomienia
-        // czas max - ile uplynelo od uruchomienia = zostało
     }
 
-    void start(){
+    void start() {
         generuj();
         System.out.println("Oczekiwanie na klientów...");
         k1 = new Klient(socket, id1, this);
-        System.out.println("Połączono 1/2, id "+id1);
+        System.out.println("Połączono 1/2, id " + id1);
         k2 = new Klient(socket, id2, this);
-        System.out.println("Połączono 2/2, id "+id2);
+        System.out.println("Połączono 2/2, id " + id2);
 
         System.out.println("Przygotowywanie gry");
         //poczatkowyczas = LocalTime.now();
         maxczas();
         losujliczbe();
-        poczatkowy = System.currentTimeMillis()/1000;
+        poczatkowy = System.currentTimeMillis() / 1000;
         //ileczasu();
 
         Thread f1 = new Thread(k1);
         Thread f2 = new Thread(k2);
 
-        k1.wyslijpakiet(4, 0,0);
-        k2.wyslijpakiet(4, 0,0);
+        k1.wyslijpakiet(2, 0, 0, 0);
+        k2.wyslijpakiet(2, 0, 0, 0);
 
         f1.start();
         f2.start();
 
         System.out.println("Start");
 
-        long pietnascie = System.currentTimeMillis()/1000;
+        long pietnascie = System.currentTimeMillis() / 1000;
 
-        while(warunek) {
-            if((System.currentTimeMillis()/1000 - pietnascie) > 14){
+        while (warunek) {
+            if ((System.currentTimeMillis() / 1000 - pietnascie) > 14) {
                 ileczasu();
-                pietnascie = System.currentTimeMillis()/1000;
+                pietnascie = System.currentTimeMillis() / 1000;
             }
-            if((poczatkowy*czasrozgrywki)-System.currentTimeMillis()/1000 <= 0){
+            if ((poczatkowy * czasrozgrywki) - System.currentTimeMillis() / 1000 <= 0) {
                 ileczasu();
             }
-            if(!f1.isAlive() && !f2.isAlive()){
+            if (!f1.isAlive() && !f2.isAlive()) {
                 warunek = false;
             }
         }
@@ -121,9 +114,9 @@ class Serwer {
         f1.interrupt();
         f2.interrupt();
 
-        try{
+        try {
             socket.close();
-        }catch(IOException e){
+        } catch (IOException e) {
             System.err.println(e.getMessage());
         }
     }

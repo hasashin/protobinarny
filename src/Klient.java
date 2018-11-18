@@ -8,7 +8,7 @@ public class Klient implements Runnable {
     private DataInputStream in;
     private DataOutputStream out;
     private Serwer ser;
-    private byte[] pakiet = new byte[3];
+    private byte[] pakiet = new byte[4];
     private boolean warunek = true;
 
     Klient(ServerSocket ssocket, int clientid, Serwer s) {
@@ -18,29 +18,51 @@ public class Klient implements Runnable {
             out = new DataOutputStream(clientsocket.getOutputStream());
             id = clientid;
             ser = s;
-            wyslijpakiet(0, 0, 0);
+            wyslijpakiet(0, 0, 0, 0);
         } catch (java.io.IOException e) {
             System.err.println(e.getMessage());
         }
     }
 
-    private byte[] pakiet(int operacja, int liczba, int id, int czas) {
-        byte[] ret = new byte[3];
+    private byte[] generujPakiet(int operacja, int odpowiedz, int liczba, int czas) {
+        /*
 
-        ret[0] = (byte) operacja;
+            operacja - 3 bity
+            odpowiedź - 3 bity
+            identyfiaktor - 5 bitów
+            liczba - 8 bitów
+            czas - 8 bitów
+            dopełnienie - 5 bitów (zera)
 
-        ret[0] = (byte) (ret[0] | ((liczba & 0b00000111) << 3));
+            000|000|00 000|00000 000|00000 000|00000
+            OP |ODP|  ID  |    L    |   TIME  | DOP
 
-        ret[1] = (byte) (id & 0b00011111);
+            000|000|00
+            000|00000
+            000|00000
+            000|00000
 
-        ret[2] = (byte) (czas & 0xFF);
+         */
+        byte[] ret = new byte[4];
+
+        ret[0] = (byte) ((operacja & 0b00000111) << 5);
+        ret[0] = (byte) (ret[0] | (byte) ((odpowiedz & 0b00000111) << 2));
+        ret[0] = (byte) (ret[0] | (byte) ((id & 0b00011000) >> 3));
+
+        ret[1] = (byte) ((id & 0b00000111) << 5);
+        ret[1] = (byte) (ret[1] | (byte) ((liczba & 0b11111000) >> 3));
+
+        ret[2] = (byte) ((liczba & 0b00000111) << 5);
+        ret[2] = (byte) (ret[2] | (byte) ((czas & 0b11111000) >> 3));
+
+        ret[3] = (byte) ((czas & 0b00000111) << 5);
 
         return ret;
     }
 
-    void wyslijpakiet(int operacja, int liczba, int czas) {
+    void wyslijpakiet(int operacja, int odpowiedz, int liczba, int czas) {
         try {
-            out.write(pakiet(operacja, liczba, id, czas));
+            out.write(generujPakiet(operacja, odpowiedz, liczba, czas), 0, 4);
         } catch (IOException r) {
             System.err.println(r.getMessage());
         }
@@ -51,29 +73,34 @@ public class Klient implements Runnable {
             clientsocket.close();
         } catch (java.io.IOException e) {
             System.err.println(e.getMessage());
-        }
-        finally {
+        } finally {
             warunek = false;
         }
     }
 
+    private void execute(int operacja, int odpowiedz, int liczba) {
+
+        if (operacja == 3 && odpowiedz == 0) {
+            ser.sprawdz(liczba, this);
+        }
+        if (operacja == 7 && odpowiedz == 7) {
+            System.out.println("Klient " + id + " kończy połączenie");
+            zakoncz();
+        }
+    }
+
     private void decode(byte[] data) {
-        int odpowiedz, sesja, operacja;
-        odpowiedz = (data[0] & 0b00111000) >> 3;
-        operacja = data[0] & 0b00000111;
-        sesja = data[1];
+        int odpowiedz, sesja, operacja, liczba;
+
+        operacja = (data[0] & 0b11100000) >> 5;
+        odpowiedz = (data[0] & 0b00011100) >> 2;
+        sesja = ((data[0] & 0b00000011) << 3) | ((data[1] & 0b11100000) >> 5);
+        liczba = ((data[1] & 0b00011111) << 3) | ((data[2] & 0b11100000) >> 5);
+
         if (sesja == id) {
-            switch (operacja) {
-                case 7:
-                    ser.sprawdz(odpowiedz, this);
-                    break;
-                case 6:
-                    System.out.println("Klient "+id+" kończy połączenie");
-                    zakoncz();
-                    break;
-                default:
-                    break;
-            }
+            execute(operacja, odpowiedz, liczba);
+        } else {
+            System.out.println("Odebrano niepoprawny komunikat od klienta " + id);
         }
     }
 
