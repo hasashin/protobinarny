@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.BitSet;
 
 public class Klient implements Runnable {
 
@@ -43,6 +44,7 @@ public class Klient implements Runnable {
             000|00000
 
          */
+
         byte[] ret = new byte[4];
 
         ret[0] = (byte) ((operacja & 0b00000111) << 5);

@@ -50,7 +50,10 @@ class Serwer {
                 k1.wyslijpakiet(7, 0, liczba, 0);
             }
         } else {
-            k.wyslijpakiet(3, 1, 0, 0);
+            if(odp < liczba)
+                k.wyslijpakiet(3, 1, 0, 0);
+            else
+                k.wyslijpakiet(3, 4, 0, 0);
         }
     }
 
