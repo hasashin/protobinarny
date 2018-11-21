@@ -88,6 +88,12 @@ class Serwer {
         poczatkowy = System.currentTimeMillis() / 1000;
         //ileczasu();
 
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
         Thread f1 = new Thread(k1);
         Thread f2 = new Thread(k2);
 
@@ -117,11 +123,7 @@ class Serwer {
         f1.interrupt();
         f2.interrupt();
 
-        try {
-            socket.close();
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+
     }
 
 }
