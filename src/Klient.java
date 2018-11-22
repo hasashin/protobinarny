@@ -1,6 +1,8 @@
-import java.net.*;
-import java.io.*;
-import java.util.BitSet;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Klient implements Runnable {
 
@@ -59,6 +61,12 @@ public class Klient implements Runnable {
 
         ret[3] = (byte) ((czas & 0b00000111) << 5);
 
+        System.out.println("Wysłano:");
+        for(int i = 0;i<ret.length;i++){
+            String s1 = String.format("%8s", Integer.toBinaryString(ret[i] & 0xFF)).replace(' ', '0');
+            System.out.print(s1+" ");
+        }
+        System.out.print("\n do klienta "+id+"\n");
         return ret;
     }
 
